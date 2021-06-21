@@ -1,6 +1,6 @@
 import axios from 'axios';
 import WebSocket from 'jest-websocket-mock';
-import { initializeServer, closeServer } from '../wss';
+import { initializeServer, closeServer } from '../src/wss';
 
 describe('Authentication tests', () => {
   beforeAll(async () => {
