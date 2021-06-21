@@ -2,7 +2,7 @@
 
 Install dependencies:
 ```
-npm run install
+npm install
 ```
 
 To run the application: (Once it's up, the application is available at http://localhost:4000)
