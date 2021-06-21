@@ -1,0 +1,35 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Lobby</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <p id="greeting"></p>
+  <button id="logout">logout</button>
+  <ul id="roomList"></ul>
+  <script>
+    $(function() {
+      $("#logout").click(function(event) {
+        var cookies = document.cookie.split(";");
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i];
+            var eqPos = cookie.indexOf("=");
+            var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        }
+        window.location.href = "http://localhost:4000/login";
+      })
+      var { username, rooms } = JSON.parse(document.cookie.split("=")[1]);
+      $("#greeting").html("hello " + username + "!");
+      var rooms = JSON.parse(document.cookie.split("=")[1]).rooms;
+      for (var i = 0; i < rooms.length; i++) {
+        $("#roomList").append("<li><a href=http://localhost:4000/chatroom" + rooms[i] + ">chatroom" + rooms[i] + "</a></li>");
+      }
+    })
+  </script>
+</body>
+</html>

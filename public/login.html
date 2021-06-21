@@ -1,0 +1,36 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Login</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+  <form id="form">
+    <input id="username" type="text" placeholder="username"/>
+    <input id="password" type="text" placeholder="password"/>
+    <button>submit</button>
+  </form>
+  <script>
+    $(function() {
+      $("#form").submit(function(event) {
+        event.preventDefault();
+        $.ajax('http://localhost:4000/api/login', {
+          method: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({
+            username: $("#username").val(),
+            password: $("#password").val()
+          }),
+          success: function(data) {
+            document.cookie = "userInfo=" + JSON.stringify(data);
+            window.location.href = "http://localhost:4000/lobby";
+          }
+        })
+      })
+    })
+  </script>
+</body>
+</html>

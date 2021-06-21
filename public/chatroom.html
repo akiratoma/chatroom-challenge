@@ -1,0 +1,65 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Chatroom</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <style>
+    div {
+      margin-top: 1em;
+      margin-bottom: 1em;
+      max-height: 20em;
+      overflow: auto;
+    }
+    div p {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <p id="greeting"></p>
+  <button id="logout">logout</button>
+  <div id="chat"></div>
+  <form id="input">
+    <input id="post" type="text"/>
+    <button>submit</button>
+  </form>
+  <script>
+    $(function() {
+      $("#logout").click(function(event) {
+        var cookies = document.cookie.split(";");
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i];
+            var eqPos = cookie.indexOf("=");
+            var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        }
+        window.location.href = "http://localhost:4000/login";
+      })
+      var { username } = JSON.parse(document.cookie.split("=")[1]);
+      $("#greeting").html("hello " + username + "!");
+      var webSocket = new WebSocket('ws://localhost:4000', username + "-" + window.location.href.slice(-1));
+      webSocket.onopen = function(event) {
+        $("#input").submit(function(event) {
+          event.preventDefault();
+          webSocket.send($("#post").val());
+          $("#post").val("");
+        })
+        webSocket.onmessage = function(event) {
+          var messages = JSON.parse(event.data)
+          if ($("#chat").children().length + messages.length > 50) {
+            for (var i = 0; i < $("#chat").children().length + messages.length - 50; i++) {
+              $("#chat").children()[0].remove()
+            }
+          }
+          messages.map(message => {
+            $("#chat").append(`<p>${message.user} (${message.timestamp}): ${message.post}</p>`)
+          })
+        }
+      }
+    })
+  </script>
+</body>
+</html>
